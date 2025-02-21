@@ -1,11 +1,14 @@
-## Interface: 11501
+## Interface: 11404
 ## Title: LootSound
-## Notes: Plays a sound when green or better quality items drop
+## Notes: Plays a sound when you receive loot
 ## Author: Your Name
 ## Version: 1.0
 
-# Sound files
-sounds\loot_sound.ogg
+# Main addon file (core functionality)
+LootSound.lua
 
-# Main addon file
-LootSound.lua 
+# Settings UI
+LootSound_Settings.lua
+
+# Sound files
+sounds\loot_sound.ogg 

@@ -19,7 +19,7 @@ local QUALITY_NAMES = {
 
 -- Create settings panel
 local settingsFrame = CreateFrame("Frame", "LootSoundSettingsFrame", UIParent, "BasicFrameTemplateWithInset")
-settingsFrame:SetSize(300, 350)
+settingsFrame:SetSize(300, 400)
 settingsFrame:SetPoint("CENTER")
 settingsFrame:Hide()
 
@@ -28,14 +28,26 @@ settingsFrame.title = settingsFrame:CreateFontString(nil, "OVERLAY", "GameFontHi
 settingsFrame.title:SetPoint("TOP", 0, -5)
 settingsFrame.title:SetText("LootSound Settings")
 
+-- Add global enable/disable toggle
+local enableCheckbox = CreateFrame("CheckButton", nil, settingsFrame, "ChatConfigCheckButtonTemplate")
+enableCheckbox:SetPoint("TOPLEFT", 20, -50)
+enableCheckbox:SetChecked(LootSoundDB.enabled)
+enableCheckbox:SetScript("OnClick", function(self)
+    LootSoundDB.enabled = self:GetChecked()
+end)
+
+local enableText = enableCheckbox:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+enableText:SetPoint("LEFT", enableCheckbox, "RIGHT", 8, 0)
+enableText:SetText("Enable LootSound")
+
 -- Add trigger type settings
 local triggerLabel = settingsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-triggerLabel:SetPoint("TOPLEFT", 20, -40)
+triggerLabel:SetPoint("TOPLEFT", 20, -90)
 triggerLabel:SetText("Trigger LootSound On:")
 
 -- Regular loot checkbox
 local regularLootCheckbox = CreateFrame("CheckButton", nil, settingsFrame, "ChatConfigCheckButtonTemplate")
-regularLootCheckbox:SetPoint("TOPLEFT", 20, -60)
+regularLootCheckbox:SetPoint("TOPLEFT", 20, -110)
 regularLootCheckbox:SetChecked(LootSoundDB.triggers.regularLoot)
 regularLootCheckbox:SetScript("OnClick", function(self)
     LootSoundDB.triggers.regularLoot = self:GetChecked()
@@ -47,7 +59,7 @@ regularLootText:SetText("Regular Loot")
 
 -- Roll loot checkbox
 local rollLootCheckbox = CreateFrame("CheckButton", nil, settingsFrame, "ChatConfigCheckButtonTemplate")
-rollLootCheckbox:SetPoint("TOPLEFT", 20, -85)
+rollLootCheckbox:SetPoint("TOPLEFT", 20, -135)
 rollLootCheckbox:SetChecked(LootSoundDB.triggers.rollLoot)
 rollLootCheckbox:SetScript("OnClick", function(self)
     LootSoundDB.triggers.rollLoot = self:GetChecked()
@@ -59,7 +71,7 @@ rollLootText:SetText("Group Loot Rolls")
 
 -- Add quality settings description
 local descriptionText = settingsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-descriptionText:SetPoint("TOPLEFT", 20, -130)
+descriptionText:SetPoint("TOPLEFT", 20, -180)
 descriptionText:SetText("Enable LootSound for...")
 
 -- Helper function to create checkboxes
@@ -80,7 +92,7 @@ local function CreateQualityCheckbox(parent, quality, yOffset)
 end
 
 -- Create checkboxes for each quality
-local startY = -150
+local startY = -200
 local spacing = -25
 settingsFrame.checkboxes = {
     CreateQualityCheckbox(settingsFrame, 5, startY + spacing * 0),  -- Legendary

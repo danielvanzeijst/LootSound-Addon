@@ -3,6 +3,7 @@ local frame = CreateFrame("Frame")
 
 -- Settings storage (will be populated from settings file)
 LootSoundDB = {
+    enabled = true,  -- Global enable/disable toggle
     playForQuality = {
         [0] = true,  -- Poor
         [1] = true,  -- Common
@@ -34,6 +35,9 @@ frame:RegisterEvent("START_LOOT_ROLL")
 
 -- Function to handle events
 frame:SetScript("OnEvent", function(self, event, ...)
+    -- Check if addon is globally enabled
+    if not LootSoundDB.enabled then return end
+    
     if event == "START_LOOT_ROLL" and LootSoundDB.triggers.rollLoot then
         local rollID = ...
         if rollID then

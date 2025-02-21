@@ -4,6 +4,7 @@ local frame = CreateFrame("Frame")
 -- Settings storage (will be populated from settings file)
 LootSoundDB = {
     enabled = true,  -- Global enable/disable toggle
+    selectedSound = "ohmygod",  -- Currently selected sound
     playForQuality = {
         [0] = true,  -- Poor
         [1] = true,  -- Common
@@ -14,7 +15,12 @@ LootSoundDB = {
     },
     triggers = {
         regularLoot = true,
-        rollLoot = true
+        rollLoot = true,
+        chatMessage = {
+            enabled = false,
+            message = "",
+            matchType = "contains" -- can be "exact" or "contains"
+        }
     }
 }
 
@@ -26,17 +32,60 @@ local ITEM_QUALITY_RARE = 3      -- Blue
 local ITEM_QUALITY_EPIC = 4      -- Purple
 local ITEM_QUALITY_LEGENDARY = 5  -- Orange
 
--- Register our custom sound
-local ohmygod = "Interface\\AddOns\\LootSound\\sounds\\ohmygod"
+-- Available sounds configuration
+local SOUNDS = {
+    ohmygod = {
+        name = "Oh My God",
+        path = "Interface\\AddOns\\LootSound\\sounds\\ohmygod"
+    },
+    vineboom = {
+        name = "Vine Boom",
+        path = "Interface\\AddOns\\LootSound\\sounds\\vineboom"
+    }
+    -- Add new sounds here following the same format:
+    -- soundId = { name = "Display Name", path = "Path/To/Sound" }
+}
 
--- Register for both events
+-- Helper function to play the selected sound
+local function PlaySelectedSound()
+    local sound = SOUNDS[LootSoundDB.selectedSound] or SOUNDS.ohmygod
+    PlaySoundFile(sound.path .. ".ogg", "Master")
+end
+
+-- Register for events
 frame:RegisterEvent("LOOT_READY")
 frame:RegisterEvent("START_LOOT_ROLL")
+frame:RegisterEvent("CHAT_MSG_SYSTEM")
+frame:RegisterEvent("CHAT_MSG_SAY")
+frame:RegisterEvent("CHAT_MSG_YELL")
+frame:RegisterEvent("CHAT_MSG_PARTY")
+frame:RegisterEvent("CHAT_MSG_PARTY_LEADER")
+frame:RegisterEvent("CHAT_MSG_RAID")
+frame:RegisterEvent("CHAT_MSG_RAID_LEADER")
 
 -- Function to handle events
 frame:SetScript("OnEvent", function(self, event, ...)
     -- Check if addon is globally enabled
     if not LootSoundDB.enabled then return end
+    
+    -- Handle chat messages
+    if event:find("CHAT_MSG_") and LootSoundDB.triggers.chatMessage.enabled and LootSoundDB.triggers.chatMessage.message ~= "" then
+        local message = ...
+        local triggerMessage = LootSoundDB.triggers.chatMessage.message
+        
+        -- Check if message matches our trigger
+        local matches = false
+        if LootSoundDB.triggers.chatMessage.matchType == "exact" then
+            matches = message == triggerMessage
+        else
+            matches = message:lower():find(triggerMessage:lower(), 1, true) ~= nil
+        end
+        
+        if matches then
+            PlaySelectedSound()
+            return
+        end
+    end
     
     if event == "START_LOOT_ROLL" and LootSoundDB.triggers.rollLoot then
         local rollID = ...
@@ -46,7 +95,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
             
             -- Play sound if enabled for this quality
             if quality and LootSoundDB.playForQuality[quality] then
-                PlaySoundFile(ohmygod .. ".ogg", "Master")
+                PlaySelectedSound()
             end
         end
     elseif event == "LOOT_READY" and LootSoundDB.triggers.regularLoot then
@@ -62,11 +111,14 @@ frame:SetScript("OnEvent", function(self, event, ...)
                 
                 -- Play sound if enabled for this quality
                 if quality and LootSoundDB.playForQuality[quality] then
-                    PlaySoundFile(ohmygod .. ".ogg", "Master")
+                    PlaySelectedSound()
                     -- Break after first item to avoid multiple sounds at once
                     break
                 end
             end
         end
     end
-end) 
+end)
+
+-- Make sounds available to settings
+_G.LOOTSOUND_SOUNDS = SOUNDS 

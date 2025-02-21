@@ -27,7 +27,7 @@ local ITEM_QUALITY_EPIC = 4      -- Purple
 local ITEM_QUALITY_LEGENDARY = 5  -- Orange
 
 -- Register our custom sound
-local CUSTOM_SOUND_PATH = "Interface\\AddOns\\LootSound\\sounds\\ohmygod"
+local ohmygod = "Interface\\AddOns\\LootSound\\sounds\\ohmygod"
 
 -- Register for both events
 frame:RegisterEvent("LOOT_READY")
@@ -46,7 +46,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
             
             -- Play sound if enabled for this quality
             if quality and LootSoundDB.playForQuality[quality] then
-                PlaySoundFile(CUSTOM_SOUND_PATH .. ".ogg", "Master")
+                PlaySoundFile(ohmygod .. ".ogg", "Master")
             end
         end
     elseif event == "LOOT_READY" and LootSoundDB.triggers.regularLoot then
@@ -62,7 +62,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
                 
                 -- Play sound if enabled for this quality
                 if quality and LootSoundDB.playForQuality[quality] then
-                    PlaySoundFile(CUSTOM_SOUND_PATH .. ".ogg", "Master")
+                    PlaySoundFile(ohmygod .. ".ogg", "Master")
                     -- Break after first item to avoid multiple sounds at once
                     break
                 end

@@ -3,6 +3,8 @@
 ## Notes: Plays a sound when you receive loot
 ## Author: Your Name
 ## Version: 1.0
+## SavedVariables: LootSoundDB
+## DefaultState: enabled
 
 # Main addon file (core functionality)
 LootSound.lua
@@ -11,4 +13,6 @@ LootSound.lua
 LootSound_Settings.lua
 
 # Sound files
-sounds\loot_sound.ogg 
+sounds\loot_sound.ogg
+sounds\custom\*.ogg
+sounds\custom\*.mp3 
